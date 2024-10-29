@@ -1,13 +1,14 @@
 import 'dart:io';
 
-import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:reto/models/to_do_model.dart';
-import 'package:reto/pages/form_page.dart';
-import 'package:reto/providers/toDoListProvider.dart';
+import 'package:excel/excel.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path/path.dart' as p;
+import 'package:reto/models/to_do_model.dart';
+import 'package:reto/providers/toDoListProvider.dart';
+import 'package:reto/pages/form_page.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -37,27 +38,35 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Future<void> _exportToExcel(String time, String title) async {
-    final excel = Excel.createExcel();
-    final sheet = excel.sheets[excel.getDefaultSheet() as String];
+  Future<void> _exportToExcel(List<ToDo> list) async {
+    // Crear un libro de Excel
+    var excel = Excel.createExcel(); // Crear un nuevo libro
+    Sheet sheet = excel['Sheet1'];
 
-    sheet!.setColumnWidth(2, 50);
-    sheet.setColumnAutoFit(3);
+    // Agregar datos
+    sheet.appendRow(
+        [TextCellValue('Horario'), TextCellValue('Tarea a realizar')]);
+    for (var i = 0; i < list.length; i++) {
+      sheet.appendRow([
+        TextCellValue('${list[i].start} - ${list[i].end}'),
+        TextCellValue(list[i].title)
+      ]);
+    }
+    // sheet!.setColumnWidth(2, 50);
+    // sheet.setColumnAutoFit(3);
 
-    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 3)).value =
-        TextCellValue(time);
-    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 4)).value =
-        TextCellValue(title);
+    // sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 3)).value =
+    //     TextCellValue(time);
+    // sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 4)).value =
+    //     TextCellValue(title);
 
-    List<int>? fileBytes = excel.save();
-    Directory directory = await getApplicationDocumentsDirectory();
+// Obtener el directorio de Descargas
+    Directory downloadsDirectory = Directory('/storage/emulated/0/Download');
+    String path = p.join(downloadsDirectory.path, 'to_do_list.xlsx');
 
-    final String fileName = "${directory.path}/to_do_list.xlsx";
-    File(fileName)
-      ..createSync(recursive: true)
-      ..writeAsBytesSync(fileBytes!);
-    print(fileName);
-    OpenFile.open(fileName);
+    final file = File(path);
+    await file.writeAsBytes(excel.encode()!);
+    OpenFile.open(path);
   }
 
   @override
@@ -67,15 +76,68 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     return Scaffold(
       appBar: AppBar(
+        leading: const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: CircleAvatar(
+            child: Text('LB'),
+          ),
+        ),
         title: const Text('Formulario de Tareas'),
         centerTitle: true,
         actions: [
           IconButton(
-              onPressed: () => _exportToExcel(
-                  '${list.first.start} - ${list.first.end}', list.first.title),
-              icon: const Icon(Icons.download))
+              onPressed: () async {
+                String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+                    '#3D8BEF', 'Cancelar', false, ScanMode.QR);
+                print(barcodeScanRes);
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (BuildContext context) =>
+                //             const ScannerPage()));
+              },
+              icon: const Icon(Icons.qr_code_sharp)),
+          IconButton(
+              onPressed: () {
+                if (list.length == 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Agregá una tarea para descargar'),
+                  ));
+                } else {
+                  _exportToExcel(list);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content:
+                        Text('Descargando excel a la carpeta de descargas'),
+                  ));
+                }
+              },
+              icon: const Icon(Icons.download)),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => const FormPage()));
+        },
+        child: Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // persistentFooterButtons: [
+      //   MaterialButton(
+      //     padding: const EdgeInsets.all(15),
+      //     onPressed: () {},
+      //     elevation: 6,
+      //     highlightElevation: 5,
+      //     shape: const CircleBorder(),
+      //     color: Colors.blue,
+      //     child: const Icon(
+      //       Icons.qr_code_rounded,
+      //       color: Colors.white,
+      //     ),
+      //   ),
+      // ],
       body: Stack(
         children: [
           ListView.builder(
@@ -100,7 +162,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       list[index].title,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -118,19 +180,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ),
           if (list.length == 0) Center(child: const Text('No tienes tareas')),
-          Positioned(
-            bottom: 50,
-            right: 30,
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => const FormPage()));
-              },
-              child: Icon(Icons.add),
-            ),
-          ),
         ],
       ),
     );
