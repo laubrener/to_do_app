@@ -1,11 +1,10 @@
-import 'dart:io';
-
-import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:reto/models/to_do_model.dart';
+import 'package:reto/services/to_do_service.dart';
 
 class ToDoListProvider extends ChangeNotifier {
   List<ToDo> toDoList = [];
+  ToDoService service = ToDoService();
 
   bool _isLoading = true;
 
@@ -15,12 +14,18 @@ class ToDoListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<ToDo> getList() {
-    return toDoList;
+  getToDoList() async {
+    _isLoading = true;
+    toDoList = await service.getToDoList();
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   addToDo(String title, String startTime, String endTime) async {
-    toDoList.add(ToDo(title: title, start: startTime, end: endTime));
+    ToDo newToDo = await service.postToDo(title, startTime, endTime);
+    toDoList.add(newToDo);
+    // toDoList.add(ToDo(title: title, start: startTime, end: endTime));
 
     _isLoading = false;
     notifyListeners();

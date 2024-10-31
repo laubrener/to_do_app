@@ -1,17 +1,22 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:excel/excel.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as p;
 import 'package:reto/models/to_do_model.dart';
+import 'package:reto/providers/data_sync_provider.dart';
 import 'package:reto/providers/toDoListProvider.dart';
 import 'package:reto/pages/form_page.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:reto/services/data_sync_service.dart';
+import 'package:reto/widgets/connection_widget.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key, required this.name}) : super(key: key);
+  final String name;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -24,12 +29,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     toDoListProvider = context.read<ToDoListProvider>();
     _loadList();
+
     super.initState();
   }
 
-  void _loadList() async {
-    await toDoListProvider.getList();
-
+  Future<void> _loadList() async {
+    await toDoListProvider.getToDoList();
+    var box = await Hive.openBox('offlineTasks');
+    // box.delete(3);
+    print(box.values);
     setState(() {});
   }
 
@@ -39,28 +47,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> _exportToExcel(List<ToDo> list) async {
-    // Crear un libro de Excel
-    var excel = Excel.createExcel(); // Crear un nuevo libro
+    var excel = Excel.createExcel();
     Sheet sheet = excel['Sheet1'];
 
-    // Agregar datos
     sheet.appendRow(
         [TextCellValue('Horario'), TextCellValue('Tarea a realizar')]);
     for (var i = 0; i < list.length; i++) {
       sheet.appendRow([
         TextCellValue('${list[i].start} - ${list[i].end}'),
-        TextCellValue(list[i].title)
+        TextCellValue(list[i].title!)
       ]);
     }
-    // sheet!.setColumnWidth(2, 50);
-    // sheet.setColumnAutoFit(3);
-
-    // sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 3)).value =
-    //     TextCellValue(time);
-    // sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 4)).value =
-    //     TextCellValue(title);
-
-// Obtener el directorio de Descargas
     Directory downloadsDirectory = Directory('/storage/emulated/0/Download');
     String path = p.join(downloadsDirectory.path, 'to_do_list.xlsx');
 
@@ -71,18 +68,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // List<ToDo> list = toDoListProvider.toDoList;
-    List<ToDo> list = context.watch<ToDoListProvider>().getList();
+    List<ToDo> list = context.watch<ToDoListProvider>().toDoList;
+    ConnectionStatusProvider connectionProvider =
+        context.watch<ConnectionStatusProvider>();
 
     return Scaffold(
       appBar: AppBar(
-        leading: const Padding(
-          padding: EdgeInsets.all(8.0),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
-            child: Text('LB'),
+            backgroundColor: Colors.deepPurple,
+            child: Text(
+              (widget.name[0] + widget.name[1]).toUpperCase(),
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
         ),
-        title: const Text('Formulario de Tareas'),
+        title: const Text('Lista de Actividades'),
         centerTitle: true,
         actions: [
           IconButton(
@@ -116,70 +118,61 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => const FormPage()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) => FormPage()));
         },
-        child: Icon(Icons.add),
+        backgroundColor: Colors.deepPurpleAccent,
+        child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      // persistentFooterButtons: [
-      //   MaterialButton(
-      //     padding: const EdgeInsets.all(15),
-      //     onPressed: () {},
-      //     elevation: 6,
-      //     highlightElevation: 5,
-      //     shape: const CircleBorder(),
-      //     color: Colors.blue,
-      //     child: const Icon(
-      //       Icons.qr_code_rounded,
-      //       color: Colors.white,
-      //     ),
-      //   ),
-      // ],
       body: Stack(
         children: [
-          ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
-            itemCount: list.length,
-            itemBuilder: (context, index) => Container(
-              padding: const EdgeInsets.all(10),
-              margin: const EdgeInsets.symmetric(vertical: 15),
-              // height: 60,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                      child: Container(
-                    padding: const EdgeInsets.all(5),
-                    child: Text(
-                      list[index].title,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+          RefreshIndicator(
+            onRefresh: _loadList,
+            child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
+              itemCount: list.length,
+              itemBuilder: (context, index) => Container(
+                padding: const EdgeInsets.all(10),
+                margin: const EdgeInsets.symmetric(vertical: 15),
+                // height: 60,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: Container(
+                      padding: const EdgeInsets.all(5),
+                      child: Text(
+                        list[index].title ?? '',
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
+                    )),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.greenAccent.shade100),
+                      child:
+                          Text('${list[index].start} - ${list[index].end} hs'),
                     ),
-                  )),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.pink.shade100),
-                    child: Text('${list[index].start} - ${list[index].end} hs'),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
           if (list.length == 0) Center(child: const Text('No tienes tareas')),
+          if (connectionProvider.status != ConnectionStatus.onLine)
+            const ConnectionWidget(),
         ],
       ),
     );

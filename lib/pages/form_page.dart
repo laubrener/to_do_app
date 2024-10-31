@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
+import 'package:reto/providers/data_sync_provider.dart';
 import 'package:reto/providers/toDoListProvider.dart';
+import 'package:reto/services/data_sync_service.dart';
 
 class FormPage extends StatelessWidget {
   const FormPage({Key? key}) : super(key: key);
@@ -37,6 +40,8 @@ class _FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    ConnectionStatusProvider connectionProvider =
+        context.watch<ConnectionStatusProvider>();
     return Column(
       children: [
         Container(
@@ -50,11 +55,6 @@ class _FormState extends State<_Form> {
               hintText: 'Escriba la Tarea',
               labelText: 'Tarea',
             ),
-            // onChanged: (valor) {
-            //   setState(() {
-            //     _nombre = valor;
-            //   });
-            // },
           ),
         ),
         Container(
@@ -83,19 +83,28 @@ class _FormState extends State<_Form> {
             ),
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         MaterialButton(
           onPressed: () {
             print('${startCtrl.text} - ${endCtrl.text}: ${titleCtrl.text}');
-            context
-                .read<ToDoListProvider>()
-                .addToDo(titleCtrl.text, startCtrl.text, endCtrl.text);
-            Navigator.pop(context);
+            if (connectionProvider.status == ConnectionStatus.onLine) {
+              context
+                  .read<ToDoListProvider>()
+                  .addToDo(titleCtrl.text, startCtrl.text, endCtrl.text);
+              Navigator.pop(context);
+            } else {
+              connectionProvider.storeTaskLocally({
+                'nombre': titleCtrl.text,
+                'comienza': startCtrl.text,
+                'termina': endCtrl.text
+              });
+              Navigator.pop(context);
+            }
           },
           elevation: 2,
           highlightElevation: 5,
           shape: const StadiumBorder(),
-          color: Colors.blue,
+          color: Colors.deepPurpleAccent,
           child: Container(
             width: double.infinity,
             height: 50,
