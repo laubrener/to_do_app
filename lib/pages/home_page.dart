@@ -1,18 +1,19 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+
 import 'package:provider/provider.dart';
 import 'package:excel/excel.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as p;
 import 'package:reto/models/to_do_model.dart';
 import 'package:reto/providers/data_sync_provider.dart';
-import 'package:reto/providers/toDoListProvider.dart';
+import 'package:reto/providers/to_do_list_provider.dart';
 import 'package:reto/pages/form_page.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:reto/services/data_sync_service.dart';
 import 'package:reto/widgets/connection_widget.dart';
+import 'package:reto/widgets/to_do_list_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key, required this.name}) : super(key: key);
@@ -35,9 +36,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> _loadList() async {
     await toDoListProvider.getToDoList();
-    var box = await Hive.openBox('offlineTasks');
-    // box.delete(3);
-    print(box.values);
     setState(() {});
   }
 
@@ -118,8 +116,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (BuildContext context) => FormPage()));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => const FormPage()));
         },
         backgroundColor: Colors.deepPurpleAccent,
         child: const Icon(Icons.add),
@@ -129,48 +129,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         children: [
           RefreshIndicator(
             onRefresh: _loadList,
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
-              itemCount: list.length,
-              itemBuilder: (context, index) => Container(
-                padding: const EdgeInsets.all(10),
-                margin: const EdgeInsets.symmetric(vertical: 15),
-                // height: 60,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: Container(
-                      padding: const EdgeInsets.all(5),
-                      child: Text(
-                        list[index].title ?? '',
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    )),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.greenAccent.shade100),
-                      child:
-                          Text('${list[index].start} - ${list[index].end} hs'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            child: ToDoListWidget(list: list),
           ),
-          if (list.length == 0) Center(child: const Text('No tienes tareas')),
+          if (list.length == 0) const Center(child: Text('No tienes tareas')),
           if (connectionProvider.status != ConnectionStatus.onLine)
             const ConnectionWidget(),
         ],

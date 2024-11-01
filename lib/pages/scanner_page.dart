@@ -7,7 +7,7 @@ class ScannerPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Scanner'),
+        title: const Text('Scanner'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(

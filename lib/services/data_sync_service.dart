@@ -33,10 +33,8 @@ class CheckInternetConnection {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         _controller.sink.add(ConnectionStatus.onLine);
-        // syncTasks();
       } else {
         _controller.sink.add(ConnectionStatus.offLine);
-        // storeDataLocally(data);
       }
     } on SocketException catch (_) {
       _controller.sink.add(ConnectionStatus.offLine);
@@ -47,15 +45,4 @@ class CheckInternetConnection {
     await _connectionSubscription?.cancel();
     _controller.cast();
   }
-
-  // void storeDataLocally(dynamic data) async {
-  //   var box = await Hive.openBox('offlineData');
-  //   await box.add(data);
-  // }
-
-  // Future<List> getLocalData() async {
-  //   var box = await Hive.openBox('offlineData');
-  //   print(box.values.toList());
-  //   return box.values.toList();
-  // }
 }

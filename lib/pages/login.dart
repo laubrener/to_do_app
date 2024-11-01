@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0)),
-                      prefixIcon: Icon(Icons.person_2_outlined),
+                      prefixIcon: const Icon(Icons.person_2_outlined),
                       labelText: 'Usuario',
                     ),
                   ),

@@ -5,7 +5,7 @@ import 'package:reto/pages/home_page.dart';
 import 'package:reto/pages/login.dart';
 import 'package:reto/providers/auth_provider.dart';
 import 'package:reto/providers/data_sync_provider.dart';
-import 'package:reto/providers/toDoListProvider.dart';
+import 'package:reto/providers/to_do_list_provider.dart';
 import 'package:reto/services/data_sync_service.dart';
 
 CheckInternetConnection internetChecker = CheckInternetConnection();

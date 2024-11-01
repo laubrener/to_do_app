@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:reto/providers/data_sync_provider.dart';
-import 'package:reto/providers/toDoListProvider.dart';
+import 'package:reto/providers/to_do_list_provider.dart';
 import 'package:reto/services/data_sync_service.dart';
 
 class FormPage extends StatelessWidget {
@@ -12,22 +11,20 @@ class FormPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Nueva Tarea'),
+        title: const Text('Nueva Tarea'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Container(
             padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-            child: _Form()),
+            child: const _Form()),
       ),
     );
   }
 }
 
 class _Form extends StatefulWidget {
-  const _Form({
-    super.key,
-  });
+  const _Form();
 
   @override
   State<_Form> createState() => _FormState();
