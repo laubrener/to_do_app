@@ -32,12 +32,14 @@ class ToDo {
   final String? title;
   final String? start;
   final String? end;
+  final bool? isChecked;
   final String? uid;
 
   ToDo({
     this.title,
     this.start,
     this.end,
+    this.isChecked,
     this.uid,
   });
 
@@ -49,6 +51,7 @@ class ToDo {
         title: json["nombre"],
         start: json["comienza"],
         end: json["termina"],
+        isChecked: json["isChecked"],
         uid: json["uid"],
       );
 
@@ -56,6 +59,7 @@ class ToDo {
         "nombre": title,
         "comienza": start,
         "termina": end,
+        "isChecked": isChecked,
         "uid": uid,
       };
 }

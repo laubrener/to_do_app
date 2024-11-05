@@ -29,4 +29,14 @@ class ToDoListProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  deleteToDo(String id) async {
+    bool ok = await service.deleteToDo(id);
+    if (ok) {
+      toDoList.removeWhere((item) => item.uid == id);
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
 }

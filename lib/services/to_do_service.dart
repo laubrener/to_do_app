@@ -16,6 +16,16 @@ class ToDoService {
     return toDos;
   }
 
+  Future<bool> deleteToDo(String id) async {
+    Uri url = Uri.parse('${Environment.apiUrl}/tareas/$id');
+    Response resp = await http.delete(url, headers: {
+      'Content-Type': 'application/json',
+    });
+    ToDos toDosModel = ToDos.fromRawJson(resp.body);
+
+    return toDosModel.ok!;
+  }
+
   Future<ToDo> postToDo(String title, String start, String end) async {
     Uri url = Uri.parse('${Environment.apiUrl}/tareas/new');
     final body = {
