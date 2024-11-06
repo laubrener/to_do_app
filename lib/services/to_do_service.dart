@@ -40,4 +40,22 @@ class ToDoService {
     ToDo newToDo = toDo.toDo ?? ToDo();
     return newToDo;
   }
+
+  Future<ToDo> editToDo(ToDo tarea) async {
+    bool newCheck = !(tarea.isChecked!);
+    print(newCheck);
+    Uri url = Uri.parse('${Environment.apiUrl}/tareas/${tarea.uid}');
+    final body = {
+      'isChecked': newCheck,
+      'nombre': tarea.title,
+      'comienza': tarea.start,
+      'termina': tarea.end,
+    };
+    Response resp = await http.put(url, body: jsonEncode(body), headers: {
+      'Content-Type': 'application/json',
+    });
+    NewTodo toDo = NewTodo.fromRawJson(resp.body);
+    ToDo newToDo = toDo.toDo ?? ToDo();
+    return newToDo;
+  }
 }

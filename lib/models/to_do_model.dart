@@ -30,6 +30,7 @@ class ToDos {
 
 class ToDo {
   final String? title;
+  final String? detail;
   final String? start;
   final String? end;
   final bool? isChecked;
@@ -37,6 +38,7 @@ class ToDo {
 
   ToDo({
     this.title,
+    this.detail,
     this.start,
     this.end,
     this.isChecked,
@@ -49,6 +51,7 @@ class ToDo {
 
   factory ToDo.fromJson(Map<String, dynamic> json) => ToDo(
         title: json["nombre"],
+        detail: json["detalle"],
         start: json["comienza"],
         end: json["termina"],
         isChecked: json["isChecked"],
@@ -57,6 +60,7 @@ class ToDo {
 
   Map<String, dynamic> toJson() => {
         "nombre": title,
+        "detalle": detail,
         "comienza": start,
         "termina": end,
         "isChecked": isChecked,

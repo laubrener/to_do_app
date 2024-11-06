@@ -28,8 +28,10 @@ class _ToDoListWidgetState extends State<ToDoListWidget> {
             children: [
               Container(
                 child: IconButton(
-                    onPressed: () {
-                      isChecked = !isChecked;
+                    onPressed: () async {
+                      await context
+                          .read<ToDoListProvider>()
+                          .editToDo(widget.list[index]);
                       print(isChecked);
                       setState(() {});
                     },
@@ -87,8 +89,8 @@ class _ToDoListWidgetState extends State<ToDoListWidget> {
                 },
                 icon: const Icon(
                   Icons.delete_outline_outlined,
-                  color: Colors.red,
-                  size: 28,
+                  // color: Colors.red,
+                  // size: 28,
                 ),
               )
             ],
@@ -110,34 +112,52 @@ class ToDoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(15),
       margin: const EdgeInsets.symmetric(vertical: 15),
       decoration: BoxDecoration(
         color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(30),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-              child: Container(
-            padding: const EdgeInsets.all(5),
-            child: Text(
-              list[index].title ?? '',
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+          Row(
+            children: [
+              Expanded(
+                  child: Container(
+                // padding: const EdgeInsets.all(5),
+                child: Text(
+                  list[index].title ?? '',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              )),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.greenAccent.shade100),
+                child: Text('${list[index].start} - ${list[index].end} hs'),
+              ),
+            ],
+          ),
+          if (list[index].detail != null)
+            Container(
+              width: double.infinity,
+              child: Text(
+                list[index].detail ?? '',
+                // 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut',
+                overflow: TextOverflow.ellipsis,
+                maxLines: 4,
+                textAlign: TextAlign.left,
+                style: const TextStyle(
+                  fontSize: 14,
+                ),
               ),
             ),
-          )),
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.greenAccent.shade100),
-            child: Text('${list[index].start} - ${list[index].end} hs'),
-          ),
         ],
       ),
     );

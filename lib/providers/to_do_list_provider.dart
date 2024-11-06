@@ -30,6 +30,16 @@ class ToDoListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  editToDo(ToDo tarea) async {
+    ToDo newToDo = await service.editToDo(tarea);
+    // toDoList.removeWhere((item) => item.uid == tarea.uid);
+    // toDoList.add(newToDo);
+    getToDoList();
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
   deleteToDo(String id) async {
     bool ok = await service.deleteToDo(id);
     if (ok) {
