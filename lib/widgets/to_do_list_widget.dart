@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:reto/models/to_do_model.dart';
 import 'package:reto/providers/to_do_list_provider.dart';
@@ -16,86 +17,127 @@ class ToDoListWidget extends StatefulWidget {
 }
 
 class _ToDoListWidgetState extends State<ToDoListWidget> {
+  double finishedToDos() {
+    int done = 0;
+    for (int i = 0; i < widget.list.length; i++) {
+      if (widget.list[i].isChecked == true) {
+        done++;
+      }
+    }
+    double percentage = (done / widget.list.length);
+    return percentage;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.only(left: 10, right: 10, top: 30),
-        itemCount: widget.list.length,
-        itemBuilder: (context, index) {
-          bool isChecked = widget.list[index].isChecked!;
-          return Row(
-            children: [
-              Container(
-                child: IconButton(
-                    onPressed: () async {
-                      await context
-                          .read<ToDoListProvider>()
-                          .editToDo(widget.list[index]);
-                      print(isChecked);
-                      setState(() {});
-                    },
-                    icon: isChecked
-                        ? Icon(
-                            Icons.check_circle_outline_outlined,
-                            color: Colors.greenAccent.shade700,
-                            size: 28,
-                          )
-                        : const Icon(
-                            Icons.circle_outlined,
-                            size: 28,
-                          )),
-              ),
-              Expanded(
-                child: ToDoWidget(
-                  list: widget.list,
-                  index: index,
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          content: Text(
-                            'Estas seguro que deseas eliminar la tarea: "${widget.list[index].title}"',
-                          ),
-                          actions: [
-                            TextButton(
-                              style: TextButton.styleFrom(
-                                textStyle:
-                                    Theme.of(context).textTheme.labelLarge,
-                              ),
-                              child: const Text('Cancelar'),
-                              onPressed: () => Navigator.of(context).pop(),
-                            ),
-                            TextButton(
-                              style: TextButton.styleFrom(
-                                textStyle:
-                                    Theme.of(context).textTheme.labelLarge,
-                              ),
-                              child: const Text('Eliminar'),
-                              onPressed: () {
-                                context
-                                    .read<ToDoListProvider>()
-                                    .deleteToDo(widget.list[index].uid!);
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      });
-                },
-                icon: const Icon(
-                  Icons.delete_outline_outlined,
-                  // color: Colors.red,
-                  // size: 28,
-                ),
-              )
-            ],
-          );
-        });
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.only(top: 30, left: 25),
+          // color: Colors.amber,
+          width: double.infinity,
+          child: const Text(
+            'Tu progreso',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(20),
+          child: LinearPercentIndicator(
+            animation: true,
+            animationDuration: 1000,
+            percent: finishedToDos(),
+            backgroundColor: Colors.deepPurple.shade100,
+            progressColor: Colors.deepPurpleAccent,
+            lineHeight: 10,
+            barRadius: Radius.circular(30),
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(left: 10, right: 10, top: 30),
+              itemCount: widget.list.length,
+              itemBuilder: (context, index) {
+                bool isChecked = widget.list[index].isChecked!;
+                return Row(
+                  children: [
+                    Container(
+                      child: IconButton(
+                          onPressed: () async {
+                            await context
+                                .read<ToDoListProvider>()
+                                .editToDo(widget.list[index]);
+                            print(isChecked);
+                            setState(() {});
+                          },
+                          icon: isChecked
+                              ? Icon(
+                                  Icons.check_circle_outline_outlined,
+                                  color: Colors.greenAccent.shade700,
+                                  size: 28,
+                                )
+                              : const Icon(
+                                  Icons.circle_outlined,
+                                  size: 28,
+                                )),
+                    ),
+                    Expanded(
+                      child: ToDoWidget(
+                        list: widget.list,
+                        index: index,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: Text(
+                                  'Estas seguro que deseas eliminar la tarea: "${widget.list[index].title}"',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    style: TextButton.styleFrom(
+                                      textStyle: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge,
+                                    ),
+                                    child: const Text('Cancelar'),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                  ),
+                                  TextButton(
+                                    style: TextButton.styleFrom(
+                                      textStyle: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge,
+                                    ),
+                                    child: const Text('Eliminar'),
+                                    onPressed: () {
+                                      context
+                                          .read<ToDoListProvider>()
+                                          .deleteToDo(widget.list[index].uid!);
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                      icon: const Icon(
+                        Icons.delete_outline_outlined,
+                        // color: Colors.red,
+                        // size: 28,
+                      ),
+                    )
+                  ],
+                );
+              }),
+        ),
+      ],
+    );
   }
 }
 
