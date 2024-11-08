@@ -17,46 +17,15 @@ class ToDoListWidget extends StatefulWidget {
 }
 
 class _ToDoListWidgetState extends State<ToDoListWidget> {
-  double finishedToDos() {
-    int done = 0;
-    for (int i = 0; i < widget.list.length; i++) {
-      if (widget.list[i].isChecked == true) {
-        done++;
-      }
-    }
-    double percentage = (done / widget.list.length);
-    return percentage;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          padding: const EdgeInsets.only(top: 30, left: 25),
-          // color: Colors.amber,
-          width: double.infinity,
-          child: const Text(
-            'Tu progreso',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(20),
-          child: LinearPercentIndicator(
-            animation: true,
-            animationDuration: 1000,
-            percent: finishedToDos(),
-            backgroundColor: Colors.deepPurple.shade100,
-            progressColor: Colors.deepPurpleAccent,
-            lineHeight: 10,
-            barRadius: Radius.circular(30),
-          ),
-        ),
         Expanded(
           child: ListView.builder(
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 30),
+              padding: const EdgeInsets.only(
+                  left: 10, right: 10, top: 20, bottom: 140),
               itemCount: widget.list.length,
               itemBuilder: (context, index) {
                 bool isChecked = widget.list[index].isChecked!;

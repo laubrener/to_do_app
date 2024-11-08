@@ -12,6 +12,7 @@ import 'package:reto/providers/to_do_list_provider.dart';
 import 'package:reto/pages/form_page.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:reto/services/data_sync_service.dart';
+import 'package:reto/widgets/bottom_widget.dart';
 import 'package:reto/widgets/connection_widget.dart';
 import 'package:reto/widgets/to_do_list_widget.dart';
 
@@ -69,8 +70,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     List<ToDo> list = context.watch<ToDoListProvider>().toDoList;
     ConnectionStatusProvider connectionProvider =
         context.watch<ConnectionStatusProvider>();
+    double finishedToDos() {
+      int done = 0;
+      for (int i = 0; i < list.length; i++) {
+        if (list[i].isChecked == true) {
+          done++;
+        }
+      }
+      double percentage = (done / list.length);
+      return percentage;
+    }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -114,6 +126,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               icon: const Icon(Icons.download)),
         ],
       ),
+      bottomSheet: BottomWidget(percent: finishedToDos()),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
