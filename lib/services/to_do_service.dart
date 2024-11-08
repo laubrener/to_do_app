@@ -26,10 +26,12 @@ class ToDoService {
     return toDosModel.ok!;
   }
 
-  Future<ToDo> postToDo(String title, String start, String end) async {
+  Future<ToDo> postToDo(
+      String title, String? detail, String start, String end) async {
     Uri url = Uri.parse('${Environment.apiUrl}/tareas/new');
     final body = {
       'nombre': title,
+      'detalle': detail,
       'comienza': start,
       'termina': end,
     };

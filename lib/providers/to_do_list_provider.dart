@@ -22,8 +22,9 @@ class ToDoListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  addToDo(String title, String startTime, String endTime) async {
-    ToDo newToDo = await service.postToDo(title, startTime, endTime);
+  addToDo(
+      String title, String? detail, String startTime, String endTime) async {
+    ToDo newToDo = await service.postToDo(title, detail, startTime, endTime);
     toDoList.add(newToDo);
 
     _isLoading = false;
@@ -31,7 +32,7 @@ class ToDoListProvider extends ChangeNotifier {
   }
 
   editToDo(ToDo tarea) async {
-    ToDo newToDo = await service.editToDo(tarea);
+    await service.editToDo(tarea);
     // toDoList.removeWhere((item) => item.uid == tarea.uid);
     // toDoList.add(newToDo);
     getToDoList();

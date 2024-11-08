@@ -45,8 +45,8 @@ class ConnectionStatusProvider extends ChangeNotifier {
 
     if (tasks != [] || tasks.isEmpty) {
       for (int i = 0; i < tasks.length; i++) {
-        await provider.addToDo(
-            tasks[i]['nombre'], tasks[i]['comienza'], tasks[i]['termina']);
+        await provider.addToDo(tasks[i]['nombre'], tasks[i]['detalle'],
+            tasks[i]['comienza'], tasks[i]['termina']);
         box.delete(i);
       }
     }

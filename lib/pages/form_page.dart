@@ -34,6 +34,7 @@ class _FormState extends State<_Form> {
   final titleCtrl = TextEditingController();
   final startCtrl = TextEditingController();
   final endCtrl = TextEditingController();
+  final detailCtrl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +52,19 @@ class _FormState extends State<_Form> {
                   OutlineInputBorder(borderRadius: BorderRadius.circular(30.0)),
               hintText: 'Escriba la Tarea',
               labelText: 'Tarea',
+            ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: TextFormField(
+            controller: detailCtrl,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: InputDecoration(
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(30.0)),
+              hintText: 'Detalle la Tarea',
+              labelText: 'Detalle',
             ),
           ),
         ),
@@ -85,13 +99,13 @@ class _FormState extends State<_Form> {
           onPressed: () {
             print('${startCtrl.text} - ${endCtrl.text}: ${titleCtrl.text}');
             if (connectionProvider.status == ConnectionStatus.onLine) {
-              context
-                  .read<ToDoListProvider>()
-                  .addToDo(titleCtrl.text, startCtrl.text, endCtrl.text);
+              context.read<ToDoListProvider>().addToDo(titleCtrl.text,
+                  detailCtrl.text, startCtrl.text, endCtrl.text);
               Navigator.pop(context);
             } else {
               connectionProvider.storeTaskLocally({
                 'nombre': titleCtrl.text,
+                'detalle': detailCtrl.text,
                 'comienza': startCtrl.text,
                 'termina': endCtrl.text
               });
