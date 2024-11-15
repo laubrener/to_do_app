@@ -7,10 +7,10 @@ import 'package:excel/excel.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as p;
 import 'package:reto/models/to_do_model.dart';
+import 'package:reto/pages/scanner_page.dart';
 import 'package:reto/providers/data_sync_provider.dart';
 import 'package:reto/providers/to_do_list_provider.dart';
 import 'package:reto/pages/form_page.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:reto/services/data_sync_service.dart';
 import 'package:reto/widgets/bottom_widget.dart';
 import 'package:reto/widgets/connection_widget.dart';
@@ -68,6 +68,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     List<ToDo> list = context.watch<ToDoListProvider>().toDoList;
+
     ConnectionStatusProvider connectionProvider =
         context.watch<ConnectionStatusProvider>();
     double finishedToDos() {
@@ -99,14 +100,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         actions: [
           IconButton(
               onPressed: () async {
-                String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-                    '#3D8BEF', 'Cancelar', false, ScanMode.QR);
-                print(barcodeScanRes);
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (BuildContext context) =>
-                //             const ScannerPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => const ScannerPage()
+
+                        // GenerateQRScreen()
+                        ));
               },
               icon: const Icon(Icons.qr_code_sharp)),
           IconButton(

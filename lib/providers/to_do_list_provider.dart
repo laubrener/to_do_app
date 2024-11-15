@@ -4,13 +4,22 @@ import 'package:reto/services/to_do_service.dart';
 
 class ToDoListProvider extends ChangeNotifier {
   List<ToDo> toDoList = [];
+  List<ToDo> defaultList = [];
+  List<ToDo> qrTodoList = [];
   ToDoService service = ToDoService();
 
   bool _isLoading = true;
+  bool _isQR = false;
 
   bool get isLoading => _isLoading;
   set isLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+
+  bool get isQR => _isQR;
+  set isQR(bool value) {
+    _isQR = value;
     notifyListeners();
   }
 
@@ -19,6 +28,23 @@ class ToDoListProvider extends ChangeNotifier {
     toDoList = await service.getToDoList();
 
     _isLoading = false;
+    notifyListeners();
+  }
+
+  defaultToDoList() async {
+    _isLoading = true;
+    defaultList = await service.getDefaultList();
+    Future.delayed(const Duration(seconds: 2));
+    _isLoading = false;
+    _isQR = false;
+    notifyListeners();
+  }
+
+  getQrList(String qrList) async {
+    _isLoading = true;
+    qrTodoList = await service.getQrList(qrList);
+    _isLoading = false;
+    _isQR = true;
     notifyListeners();
   }
 

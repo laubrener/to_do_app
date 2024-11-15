@@ -16,6 +16,18 @@ class ToDoService {
     return toDos;
   }
 
+  Future<List<ToDo>> getDefaultList() async {
+    ToDos toDosModel = ToDos.fromRawJson(generateSampleJSON());
+    List<ToDo> toDos = toDosModel.response ?? [];
+    return toDos;
+  }
+
+  Future<List<ToDo>> getQrList(String qrList) async {
+    ToDos toDosModel = ToDos.fromRawJson(qrList);
+    List<ToDo> toDos = toDosModel.response ?? [];
+    return toDos;
+  }
+
   Future<bool> deleteToDo(String id) async {
     Uri url = Uri.parse('${Environment.apiUrl}/tareas/$id');
     Response resp = await http.delete(url, headers: {
@@ -59,5 +71,66 @@ class ToDoService {
     NewTodo toDo = NewTodo.fromRawJson(resp.body);
     ToDo newToDo = toDo.toDo ?? ToDo();
     return newToDo;
+  }
+
+  String generateSampleJSON() {
+    Map<String, dynamic> jsonToDoList = {
+      "response": [
+        {
+          'nombre': 'Lavarme los dientes',
+          'comienza': '9',
+          'termina': '9:05',
+          'isChecked': false
+        },
+        {
+          'nombre': 'Desayunar',
+          'comienza': '9:30',
+          'termina': '9:45',
+          'isChecked': false
+        },
+        {
+          'nombre': 'Arreglar la ducha',
+          'comienza': '9:45',
+          'termina': '11',
+          'isChecked': false
+        },
+        {
+          'nombre': 'Ir al gimnasio',
+          'detalle': 'Hacer 50 abdominales y 50 sentadillas',
+          'comienza': '15:30',
+          'termina': '17',
+          'isChecked': false
+        },
+        {
+          'nombre': 'Cocinar',
+          'comienza': '18',
+          'termina': '19',
+          'isChecked': false
+        },
+        {
+          'nombre': 'Tomarme una ducha',
+          'comienza': '20',
+          'termina': '20:30',
+          'isChecked': false
+        },
+        {
+          'nombre': 'Estudiar',
+          'detalle': 'Estudiar Flutter',
+          'comienza': '20:30',
+          'termina': '23:30',
+          'isChecked': false
+        },
+        {
+          'nombre': 'Dormir',
+          'comienza': '23:30',
+          'termina': '8',
+          'isChecked': false
+        }
+      ]
+    };
+
+    String jsonString = jsonEncode(jsonToDoList);
+    print(jsonString);
+    return jsonString;
   }
 }

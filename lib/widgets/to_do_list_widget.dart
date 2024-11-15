@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:reto/models/to_do_model.dart';
 import 'package:reto/providers/to_do_list_provider.dart';
