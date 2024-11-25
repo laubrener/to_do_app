@@ -7,7 +7,9 @@ import 'package:excel/excel.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as p;
 import 'package:reto/models/to_do_model.dart';
+import 'package:reto/models/user_model.dart';
 import 'package:reto/pages/scanner_page.dart';
+import 'package:reto/providers/auth_provider.dart';
 import 'package:reto/providers/data_sync_provider.dart';
 import 'package:reto/providers/to_do_list_provider.dart';
 import 'package:reto/pages/form_page.dart';
@@ -17,8 +19,9 @@ import 'package:reto/widgets/connection_widget.dart';
 import 'package:reto/widgets/to_do_list_widget.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.name}) : super(key: key);
-  final String name;
+  const HomePage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -68,6 +71,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     List<ToDo> list = context.watch<ToDoListProvider>().toDoList;
+    User? user = context.read<AuthProvider>().user;
+    String userName = user?.nombre ?? 'laura';
 
     ConnectionStatusProvider connectionProvider =
         context.watch<ConnectionStatusProvider>();
@@ -90,7 +95,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           child: CircleAvatar(
             backgroundColor: Colors.deepPurple,
             child: Text(
-              (widget.name[0] + widget.name[1]).toUpperCase(),
+              (userName[0] + userName[1]).toUpperCase(),
+              // (widget.name[0] + widget.name[1]).toUpperCase(),
               style: const TextStyle(color: Colors.white),
             ),
           ),

@@ -86,9 +86,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (BuildContext context) => HomePage(
-                                  name: userCtrl.text.trim(),
-                                ),
+                                builder: (BuildContext context) =>
+                                    const HomePage(),
                               ),
                             );
                           } else {

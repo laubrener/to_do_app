@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reto/pages/home_page.dart';
 import 'package:reto/providers/data_sync_provider.dart';
 import 'package:reto/providers/to_do_list_provider.dart';
 import 'package:reto/services/data_sync_service.dart';
@@ -101,7 +102,12 @@ class _FormState extends State<_Form> {
             if (connectionProvider.status == ConnectionStatus.onLine) {
               context.read<ToDoListProvider>().addToDo(titleCtrl.text,
                   startCtrl.text, endCtrl.text, detailCtrl.text);
-              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => const HomePage(),
+                ),
+              );
             } else {
               connectionProvider.storeTaskLocally({
                 'nombre': titleCtrl.text,

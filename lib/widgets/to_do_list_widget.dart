@@ -56,55 +56,66 @@ class _ToDoListWidgetState extends State<ToDoListWidget> {
                         index: index,
                       ),
                     ),
-                    IconButton(
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                content: Text(
-                                  'Estas seguro que deseas eliminar la tarea: "${widget.list[index].title}"',
-                                ),
-                                actions: [
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                      textStyle: Theme.of(context)
-                                          .textTheme
-                                          .labelLarge,
-                                    ),
-                                    child: const Text('Cancelar'),
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                  ),
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                      textStyle: Theme.of(context)
-                                          .textTheme
-                                          .labelLarge,
-                                    ),
-                                    child: const Text('Eliminar'),
-                                    onPressed: () {
-                                      context
-                                          .read<ToDoListProvider>()
-                                          .deleteToDo(widget.list[index].uid!);
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            });
-                      },
-                      icon: const Icon(
-                        Icons.delete_outline_outlined,
-                        // color: Colors.red,
-                        // size: 28,
-                      ),
-                    )
+                    DeleteBtn(widget: widget, index: index)
                   ],
                 );
               }),
         ),
       ],
+    );
+  }
+}
+
+class DeleteBtn extends StatelessWidget {
+  const DeleteBtn({
+    super.key,
+    required this.widget,
+    required this.index,
+  });
+
+  final ToDoListWidget widget;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: Text(
+                  'Estas seguro que deseas eliminar la tarea: "${widget.list[index].title}"',
+                ),
+                actions: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    child: const Text('Cancelar'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    child: const Text('Eliminar'),
+                    onPressed: () {
+                      context
+                          .read<ToDoListProvider>()
+                          .deleteToDo(widget.list[index].uid!);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
+      },
+      icon: const Icon(
+        Icons.delete_outline_outlined,
+        // color: Colors.red,
+        // size: 28,
+      ),
     );
   }
 }
@@ -159,7 +170,6 @@ class ToDoWidget extends StatelessWidget {
               width: double.infinity,
               child: Text(
                 list[index].detail ?? '',
-                // 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 4,
                 textAlign: TextAlign.left,

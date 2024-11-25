@@ -29,9 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final Map<String, Widget Function(BuildContext)> appRoutes = {
       // 'loading': (_) => const LoadingPage(),
-      'home': (_) => const HomePage(
-            name: 'lau',
-          ),
+      'home': (_) => const HomePage(),
       'login': (_) => const LoginPage(),
     };
 

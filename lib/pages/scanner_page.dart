@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reto/models/to_do_model.dart';
+import 'package:reto/pages/home_page.dart';
 import 'package:reto/providers/to_do_list_provider.dart';
 import 'package:reto/widgets/btn_widget.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -104,26 +105,38 @@ class _ScannerPageState extends State<ScannerPage> {
                       : defaultList,
                 )),
           BtnWidget(
-              title: 'Agregar tareas',
-              onPressed: () {
-                List<ToDo> list = [];
-                if (context.read<ToDoListProvider>().isQR) {
-                  list = qrList;
-                } else {
-                  list = defaultList;
-                }
-                for (var i = 0; i < list.length; i++) {
-                  context.read<ToDoListProvider>().addToDo(
-                        list[i].title!,
-                        list[i].start!,
-                        list[i].end!,
-                        list[i].detail,
-                      );
-                }
-                context.read<ToDoListProvider>().defaultList = [];
-                Future.delayed(const Duration(seconds: 1))
-                    .then((value) => Navigator.pop(context));
-              }),
+            title: 'Agregar tareas',
+            onPressed: qrList.isNotEmpty || defaultList.isNotEmpty
+                ? () {
+                    List<ToDo> list = [];
+                    if (context.read<ToDoListProvider>().isQR) {
+                      list = qrList;
+                    } else {
+                      list = defaultList;
+                    }
+                    for (var i = 0; i < list.length; i++) {
+                      context.read<ToDoListProvider>().addToDo(
+                            list[i].title!,
+                            list[i].start!,
+                            list[i].end!,
+                            list[i].detail,
+                          );
+                    }
+                    context.read<ToDoListProvider>().defaultList = [];
+                    Future.delayed(const Duration(seconds: 1))
+                        .then((value) => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    const HomePage(),
+                              ),
+                            ));
+                  }
+                : () {},
+            color: qrList.isNotEmpty || defaultList.isNotEmpty
+                ? Colors.deepPurpleAccent
+                : Colors.grey,
+          ),
         ],
       ),
     );

@@ -27,10 +27,12 @@ class GenerateQRScreen extends StatelessWidget {
   }
   ''';
 
+  const GenerateQRScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Generar QR')),
+      appBar: AppBar(title: const Text('Generar QR')),
       body: Center(
         child: QrImageView(
           data: jsonString,
