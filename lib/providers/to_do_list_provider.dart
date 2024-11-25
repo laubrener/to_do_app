@@ -49,8 +49,8 @@ class ToDoListProvider extends ChangeNotifier {
   }
 
   addToDo(
-      String title, String? detail, String startTime, String endTime) async {
-    ToDo newToDo = await service.postToDo(title, detail, startTime, endTime);
+      String title, String startTime, String endTime, String? detail) async {
+    ToDo newToDo = await service.postToDo(title, startTime, endTime, detail);
     toDoList.add(newToDo);
 
     _isLoading = false;

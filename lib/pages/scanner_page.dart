@@ -106,7 +106,23 @@ class _ScannerPageState extends State<ScannerPage> {
           BtnWidget(
               title: 'Agregar tareas',
               onPressed: () {
-                // falta hacer funcion para agregar las tareas nuevas
+                List<ToDo> list = [];
+                if (context.read<ToDoListProvider>().isQR) {
+                  list = qrList;
+                } else {
+                  list = defaultList;
+                }
+                for (var i = 0; i < list.length; i++) {
+                  context.read<ToDoListProvider>().addToDo(
+                        list[i].title!,
+                        list[i].start!,
+                        list[i].end!,
+                        list[i].detail,
+                      );
+                }
+                context.read<ToDoListProvider>().defaultList = [];
+                Future.delayed(const Duration(seconds: 1))
+                    .then((value) => Navigator.pop(context));
               }),
         ],
       ),
@@ -134,6 +150,9 @@ class FormWidget extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                 ),
+                visualDensity: VisualDensity.compact,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40)),
                 trailing: Text('${list[index].start} - ${list[index].end}'),
                 tileColor: Colors.grey.shade200,
                 leading: const Icon(Icons.date_range_outlined),

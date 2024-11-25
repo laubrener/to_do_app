@@ -39,13 +39,13 @@ class ToDoService {
   }
 
   Future<ToDo> postToDo(
-      String title, String? detail, String start, String end) async {
+      String title, String start, String end, String? detail) async {
     Uri url = Uri.parse('${Environment.apiUrl}/tareas/new');
     final body = {
       'nombre': title,
-      'detalle': detail,
       'comienza': start,
       'termina': end,
+      'detalle': detail,
     };
     Response resp = await http.post(url, body: jsonEncode(body), headers: {
       'Content-Type': 'application/json',
@@ -77,55 +77,24 @@ class ToDoService {
     Map<String, dynamic> jsonToDoList = {
       "response": [
         {
-          'nombre': 'Lavarme los dientes',
-          'comienza': '9',
-          'termina': '9:05',
+          'nombre': 'Daily',
+          'comienza': '09',
+          'termina': '09:15',
           'isChecked': false
         },
         {
-          'nombre': 'Desayunar',
-          'comienza': '9:30',
-          'termina': '9:45',
+          'nombre': 'Tarea de hoy',
+          'detalle': 'Desarrollo del nuevo feature',
+          'comienza': '09:30',
+          'termina': '12:45',
           'isChecked': false
         },
         {
-          'nombre': 'Arreglar la ducha',
-          'comienza': '9:45',
-          'termina': '11',
+          'nombre': 'Meeting',
+          'comienza': '17',
+          'termina': '18',
           'isChecked': false
         },
-        {
-          'nombre': 'Ir al gimnasio',
-          'detalle': 'Hacer 50 abdominales y 50 sentadillas',
-          'comienza': '15:30',
-          'termina': '17',
-          'isChecked': false
-        },
-        {
-          'nombre': 'Cocinar',
-          'comienza': '18',
-          'termina': '19',
-          'isChecked': false
-        },
-        {
-          'nombre': 'Tomarme una ducha',
-          'comienza': '20',
-          'termina': '20:30',
-          'isChecked': false
-        },
-        {
-          'nombre': 'Estudiar',
-          'detalle': 'Estudiar Flutter',
-          'comienza': '20:30',
-          'termina': '23:30',
-          'isChecked': false
-        },
-        {
-          'nombre': 'Dormir',
-          'comienza': '23:30',
-          'termina': '8',
-          'isChecked': false
-        }
       ]
     };
 

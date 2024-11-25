@@ -100,14 +100,14 @@ class _FormState extends State<_Form> {
             print('${startCtrl.text} - ${endCtrl.text}: ${titleCtrl.text}');
             if (connectionProvider.status == ConnectionStatus.onLine) {
               context.read<ToDoListProvider>().addToDo(titleCtrl.text,
-                  detailCtrl.text, startCtrl.text, endCtrl.text);
+                  startCtrl.text, endCtrl.text, detailCtrl.text);
               Navigator.pop(context);
             } else {
               connectionProvider.storeTaskLocally({
                 'nombre': titleCtrl.text,
-                'detalle': detailCtrl.text,
                 'comienza': startCtrl.text,
-                'termina': endCtrl.text
+                'termina': endCtrl.text,
+                'detalle': detailCtrl.text
               });
               Navigator.pop(context);
             }

@@ -27,7 +27,7 @@ class _ToDoListWidgetState extends State<ToDoListWidget> {
                   left: 10, right: 10, top: 20, bottom: 140),
               itemCount: widget.list.length,
               itemBuilder: (context, index) {
-                bool isChecked = widget.list[index].isChecked!;
+                bool isChecked = widget.list[index].isChecked ?? false;
                 return Row(
                   children: [
                     Container(
