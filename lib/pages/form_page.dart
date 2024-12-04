@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reto/models/to_do_model.dart';
 import 'package:reto/pages/home_page.dart';
 import 'package:reto/providers/data_sync_provider.dart';
 import 'package:reto/providers/to_do_list_provider.dart';
 import 'package:reto/services/data_sync_service.dart';
 
 class FormPage extends StatelessWidget {
-  const FormPage({Key? key}) : super(key: key);
+  final ToDo? todo;
+  const FormPage({Key? key, this.todo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +20,15 @@ class FormPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Container(
             padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-            child: const _Form()),
+            child: _Form(todo)),
       ),
     );
   }
 }
 
 class _Form extends StatefulWidget {
-  const _Form();
+  const _Form(this.todo);
+  final ToDo? todo;
 
   @override
   State<_Form> createState() => _FormState();
@@ -36,6 +39,15 @@ class _FormState extends State<_Form> {
   final startCtrl = TextEditingController();
   final endCtrl = TextEditingController();
   final detailCtrl = TextEditingController();
+
+  @override
+  void initState() {
+    if (widget.todo?.title != null) titleCtrl.text = widget.todo!.title!;
+    if (widget.todo?.start != null) startCtrl.text = widget.todo!.start!;
+    if (widget.todo?.end != null) endCtrl.text = widget.todo!.end!;
+    if (widget.todo?.detail != null) detailCtrl.text = widget.todo!.detail!;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +73,7 @@ class _FormState extends State<_Form> {
           child: TextFormField(
             controller: detailCtrl,
             textCapitalization: TextCapitalization.sentences,
+            maxLines: 6,
             decoration: InputDecoration(
               border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(30.0)),
@@ -100,8 +113,19 @@ class _FormState extends State<_Form> {
           onPressed: () {
             print('${startCtrl.text} - ${endCtrl.text}: ${titleCtrl.text}');
             if (connectionProvider.status == ConnectionStatus.onLine) {
-              context.read<ToDoListProvider>().addToDo(titleCtrl.text,
-                  startCtrl.text, endCtrl.text, detailCtrl.text);
+              if (widget.todo != null) {
+                context.read<ToDoListProvider>().editToDo(ToDo(
+                      uid: widget.todo!.uid!,
+                      title: titleCtrl.text,
+                      detail: detailCtrl.text,
+                      start: startCtrl.text,
+                      end: endCtrl.text,
+                    ));
+              } else {
+                context.read<ToDoListProvider>().addToDo(titleCtrl.text,
+                    startCtrl.text, endCtrl.text, detailCtrl.text);
+              }
+              FocusScope.of(context);
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -109,6 +133,7 @@ class _FormState extends State<_Form> {
                 ),
               );
             } else {
+              FocusScope.of(context);
               connectionProvider.storeTaskLocally({
                 'nombre': titleCtrl.text,
                 'comienza': startCtrl.text,

@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           done++;
         }
       }
-      double percentage = (done / list.length);
+      double percentage = double.parse((done / list.length).toStringAsFixed(2));
       return percentage;
     }
 

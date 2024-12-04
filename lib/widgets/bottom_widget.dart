@@ -41,10 +41,9 @@ class _BottomWidgetState extends State<BottomWidget> {
               animation: true,
               animationDuration: 1000,
               percent: widget.percent,
-              backgroundColor: Colors.deepPurple.shade100,
-              // progressColor: Colors.deepPurpleAccent,
-              lineHeight: 10,
-              barRadius: const Radius.circular(30),
+              backgroundColor: Colors.deepPurple.shade50,
+              lineHeight: 10.0,
+              barRadius: const Radius.circular(30.0),
               clipLinearGradient: true,
               linearGradient: const LinearGradient(
                   colors: [Colors.greenAccent, Colors.deepPurpleAccent]),
