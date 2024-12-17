@@ -1,16 +1,23 @@
-# reto
+# To Do App
 
-A new Flutter project.
+A task management app designed to maximize productivity, combining advanced features with an intuitive design.
 
-## Getting Started
+## What does this app do?
 
-This project is a starting point for a Flutter application.
+- Comprehensive task management:
+Users can create, edit, delete, and mark tasks as completed or pending—all from a user-friendly interface.
+- Smart synchronization:
+The app automatically saves changes locally when offline and syncs them with the database once the connection is restored.
+- Automation and flexibility:
+Scan QR codes to quickly import tasks.
+Use predesigned templates to speed up task creation.
+Generate reports in Excel format with a single click.
 
-A few resources to get you started if this is your first Flutter project:
+## Technologies behind the app
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Frontend: Flutter, using Provider for efficient state management.
+- Backend: Node.js and Express, with a database designed to reliably manage users and tasks. [Take a look at the backend repository](https://github.com/laubrener/to_do_app_server)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Impact
+
+With this app, users can manage their tasks anytime, even without an internet connection, making it ideal for dynamic work environments or areas with limited connectivity.

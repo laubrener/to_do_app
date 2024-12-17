@@ -96,7 +96,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             backgroundColor: Colors.deepPurple,
             child: Text(
               (userName[0] + userName[1]).toUpperCase(),
-              // (widget.name[0] + widget.name[1]).toUpperCase(),
               style: const TextStyle(color: Colors.white),
             ),
           ),
